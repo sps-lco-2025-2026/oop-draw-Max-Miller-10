@@ -35,6 +35,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.Shape = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.Action = new System.Windows.Forms.ComboBox();
+            this.label4 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.Canvas)).BeginInit();
             this.SuspendLayout();
             // 
@@ -100,7 +102,9 @@
             this.Shape.FormattingEnabled = true;
             this.Shape.Items.AddRange(new object[] {
             "Line",
-            "Rectangle"});
+            "Rectangle",
+            "Ellipse",
+            "Circle"});
             this.Shape.Location = new System.Drawing.Point(24, 192);
             this.Shape.Name = "Shape";
             this.Shape.Size = new System.Drawing.Size(121, 24);
@@ -115,11 +119,33 @@
             this.label3.TabIndex = 6;
             this.label3.Text = "Shape";
             // 
+            // Action
+            // 
+            this.Action.FormattingEnabled = true;
+            this.Action.Items.AddRange(new object[] {
+            "Draw",
+            "Move"});
+            this.Action.Location = new System.Drawing.Point(24, 254);
+            this.Action.Name = "Action";
+            this.Action.Size = new System.Drawing.Size(121, 24);
+            this.Action.TabIndex = 7;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(24, 232);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(44, 16);
+            this.label4.TabIndex = 8;
+            this.label4.Text = "Action";
+            // 
             // OOPDraw
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.Action);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.Shape);
             this.Controls.Add(this.label2);
@@ -144,6 +170,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox Shape;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.ComboBox Action;
+        private System.Windows.Forms.Label label4;
     }
 }
 
