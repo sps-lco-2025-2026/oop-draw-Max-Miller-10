@@ -12,6 +12,14 @@ namespace OOPDraw
 {
     public partial class OOPDraw : Form
     {
+        
+        Pen currentPen = new Pen(Color.Black);
+        bool dragging = false;
+        Rectangle selectionBox;
+        Point startOfDrag = Point.Empty;
+        Point lastMousePosition = Point.Empty;
+        List<Shape> shapes = new List<Shape>();
+
         public OOPDraw()
         {
             InitializeComponent();
@@ -22,11 +30,8 @@ namespace OOPDraw
             Shape.SelectedItem = "Line";
             Action.SelectedItem = "Draw";
         }
-        Pen currentPen = new Pen(Color.Black);
-        bool dragging = false;
-        Point startOfDrag = Point.Empty;
-        Point lastMousePosition = Point.Empty;
-        List<Shape> shapes = new List<Shape>();
+
+
         private void Canvas_Paint(object sender, PaintEventArgs e)
         {
             Graphics gr = e.Graphics;
@@ -36,17 +41,68 @@ namespace OOPDraw
 
             }
 
-
+            if (selectionBox != null) selectionBox.Draw(gr);
         }
 
         private void Canvas_MouseDown(object sender, MouseEventArgs e)
         {
             dragging = true;
             startOfDrag = lastMousePosition = e.Location;
-            if (Action.Text == "Draw")
+
+            switch (Action.Text)
             {
-                AddShape(e);
+                case "Draw":
+                    AddShape(e);
+                    break;
+                case "Select":
+                    Pen p = new Pen(Color.Black, 1.0F);
+                    selectionBox = new Rectangle(p, startOfDrag.X, startOfDrag.Y);
+                    break;
             }
+            
+        }
+        private void Canvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (dragging)
+            {
+                
+                switch (Action.Text)
+                {
+                    case "Move":
+                        MoveSelectedShapes(e);
+                        break;
+                    case "Draw":
+                        Shape shape = shapes.Last();
+                        shape.GrowTo(e.X, e.Y);
+                        break;
+                    case "Select":
+                        selectionBox.GrowTo(e.X, e.Y);
+                        SelectShapes();
+                        break;
+                }
+                lastMousePosition = e.Location;
+                Refresh();
+            }
+        }
+
+        private void MoveSelectedShapes(MouseEventArgs e)
+        {
+            foreach (Shape s in GetSelectedShapes())
+            {
+                s.MoveBy(e.X - lastMousePosition.X, e.Y - lastMousePosition.Y);
+            }
+        }
+        private List<Shape> GetSelectedShapes()
+        {
+            return shapes.Where(s => s.Selected).ToList();
+        }
+
+        private void Canvas_MouseUp(object sender, MouseEventArgs e)
+        {
+            dragging = false;
+            lastMousePosition = Point.Empty;
+            selectionBox = null;
+            Refresh();
         }
 
         private void AddShape(MouseEventArgs e)
@@ -67,37 +123,13 @@ namespace OOPDraw
                 case "Circle":
                     shapes.Add(new Circle(currentPen, e.X, e.Y));
                     break;
+                ;
             }
 
            
         }
 
-        private void Canvas_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (dragging)
-            {
-                Shape shape = shapes.Last();
-                switch (Action.Text)
-                {
-                    case "Move":
-                        if (lastMousePosition == Point.Empty) lastMousePosition = e.Location;
-                        shape.MoveBy(e.X - lastMousePosition.X, e.Y - lastMousePosition.Y);
-                        break;
-                    case "Draw":
-                        shape.GrowTo(e.X, e.Y);
-                        break;
-                }
-                lastMousePosition = e.Location;
-                Refresh();
-            }
-        }
-
-        private void Canvas_MouseUp(object sender, MouseEventArgs e)
-        {
-            dragging = false;
-            lastMousePosition = Point.Empty;
-            Refresh();
-        }
+        
 
         private void LineWidth_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -142,6 +174,69 @@ namespace OOPDraw
             {
                 s.Deselect();
             }
+        }
+
+        private void SelectShapes()
+        {
+            DeselectAll();
+            foreach (Shape s in shapes)
+            {
+                if (selectionBox.FullySurrounds(s)) s.Select();
+            }
+        }
+
+        private void Action_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            switch (Action.Text)
+            {
+                case "Group":
+                    GroupSelectedShapes();
+                    break;
+                case "Delete":
+                    DeleteSelectedShapes();
+                    break;
+                case "Duplicate":
+                    DuplicateSelectedShapes();
+                    break;
+            }
+        }
+
+        private void GroupSelectedShapes()
+        {
+            var members = GetSelectedShapes();
+            if (members.Count < 2) return;
+
+            CompositeShape compS = new CompositeShape(members);
+            compS.Select();
+            shapes.Add(compS);
+            foreach (Shape m in members)
+            {
+                shapes.Remove(m);
+                m.Deselect();
+            }
+            Refresh();
+        }
+
+        private void DeleteSelectedShapes()
+        {
+            foreach (Shape s in GetSelectedShapes())
+            {
+                shapes.Remove(s);
+            }
+            Refresh();
+        }
+
+        private void DuplicateSelectedShapes()
+        {
+            foreach (Shape s in GetSelectedShapes())
+            {
+                s.Deselect();
+                Shape newClone = s.Clone();
+                newClone.MoveBy(50, 50);
+                newClone.Select();
+                shapes.Add(newClone);
+            }
+            Refresh();
         }
     }
 }

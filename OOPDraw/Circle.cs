@@ -29,5 +29,11 @@ namespace OOPDraw
             X2 = X1 + diameter;
             Y2 = Y1 + diameter;
         }
+
+        public override Shape Clone()
+        {
+            return new Circle(Pen, X1, Y1, X2, Y2);
+
+        }
     }
 }

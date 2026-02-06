@@ -36,5 +36,10 @@ namespace OOPDraw
             (int xs, int ys, int ws, int hs) = s.EnclosingRectangle();
             return x < xs && y < ys && x + w > xs + ws && y + h > ys + hs;
         }
+
+        public override Shape Clone()
+        {
+            return new Rectangle(Pen, X1, Y1, X2, Y2);
+        }
     }
 }

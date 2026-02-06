@@ -30,7 +30,7 @@ namespace OOPDraw
         {
         }
 
-        public void MoveBy(int xDelta, int yDelta)
+        public virtual void MoveBy(int xDelta, int yDelta)
         {
             X1 += xDelta;
             Y1 += yDelta;
@@ -48,6 +48,8 @@ namespace OOPDraw
         }
 
         public abstract void Draw(Graphics g);
+
+        public abstract Shape Clone();
         public virtual void GrowTo(int x2, int y2)
         {
             X2 = x2;

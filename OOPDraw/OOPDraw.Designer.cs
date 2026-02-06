@@ -124,11 +124,16 @@
             this.Action.FormattingEnabled = true;
             this.Action.Items.AddRange(new object[] {
             "Draw",
-            "Move"});
+            "Move",
+            "Select",
+            "Group",
+            "Delete",
+            "Duplicate"});
             this.Action.Location = new System.Drawing.Point(24, 254);
             this.Action.Name = "Action";
             this.Action.Size = new System.Drawing.Size(121, 24);
             this.Action.TabIndex = 7;
+            this.Action.SelectedIndexChanged += new System.EventHandler(this.Action_SelectedIndexChanged);
             // 
             // label4
             // 
